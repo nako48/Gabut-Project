@@ -121,7 +121,7 @@ TWILIO(){
 	if [[ $gET =~ "TWILIO" ]]; then
 		SMTP="$SID|$TOKEN"
 		printf "${labelijo}-- TWILIO LIVE --${normal} ${bold} ${1}\n"
-		echo "$SMTP">>result/smtp.txt
+		echo "$SMTP">>result/twilioresult.txt
 	else
 		printf "${labelmerah}-- DEAD --${normal} ${bold} ${1}\n"
 		echo "$1">>result/twilio-die.txt
