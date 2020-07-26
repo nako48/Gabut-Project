@@ -19,10 +19,10 @@ labelkuning='\e[43m'
 updater() {
 	echo "Checking integrity file to server..."
 	localShellCode=`cat $0 | sha256sum`
-	cloudShellCode=`curl "https://raw.githubusercontent.com/nako48/Check-Bulk-DA-PA-Moz-Trust/master/info.sh" -s | sha256sum`
+	cloudShellCode=`curl "https://raw.githubusercontent.com/nako48/Gabut-Project/master/haruka.sh" -s | sha256sum`
 	if [[ $localShellCode != $cloudShellCode ]]; then
 		echo "Updating script... Please wait."
-		wget "https://raw.githubusercontent.com/nako48/Check-Bulk-DA-PA-Moz-Trust/master/info.sh"
+		wget "https://raw.githubusercontent.com/nako48/Gabut-Project/master/haruka.sh"
 		echo "File successfully updated on `date`."
 	else
 		echo "Script are up to date"
