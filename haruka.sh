@@ -116,8 +116,8 @@ SMTP(){
 }
 TWILIO(){
 	gEtSMTP $1
-	SID=$(echo $gET | grep -Po '(?<=TWILIO_SID=")[^"]*' | head -1)
-	TOKEN=$(echo $gET | grep -Po '(?<=TWILIO_AUTH_TOKEN=")[^"]*' | head -1)
+	SID=$(echo $gET | grep -Po '(?<=TWILIO_SID=)[^ ]*' | head -1)
+	TOKEN=$(echo $gET | grep -Po '(?<=TWILIO_AUTH_TOKEN=)[^ ]*' | head -1)
 	if [[ $gET =~ "TWILIO" ]]; then
 		SMTP="$SID|$TOKEN"
 		printf "${labelijo}-- TWILIO LIVE --${normal} ${bold} ${1}\n"
