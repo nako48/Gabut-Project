@@ -47,7 +47,7 @@ TwilioREsulT(){
 	statusaccount=$(echo $gET | grep -Po '(?<=error":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
 	if [[ $statusaccount =~ "200" ]]; then
 		printf "${labelijo}-- TWILIO LIVE --${normal} ${bold} ${1}|${2} - $credit ($type)\n"
-		echo "WORKED => $keyna|$secret - $credit ($Currency) ($phone)">>result/twilioinfo.txt
+		echo "WORKED => $keyna|$secret - $credit ($type) ($phone)">>result/twilioinfo.txt
 	else
 		printf "${labelmerah}-- TWILIO ERROR --${normal} ${bold} ${1}\n"
 	fi	
